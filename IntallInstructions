@@ -1,0 +1,142 @@
+
+https://medium.com/analytics-vidhya/manage-ml-deployments-like-a-boss-deploy-your-first-ab-test-with-sklearn-kubernetes-and-b10ae0819dfe
+
+https://medium.com/google-cloud/installing-helm-in-google-kubernetes-engine-7f07f43c536e
+
+git clone https://github.com/jonbcampos/kubernetes-series.git
+cd ~/kubernetes-series/helm/scripts
+sh startup.sh
+
+
+Install s2i:
+wget https://github.com/openshift/source-to-image/releases/download/v1.1.14/source-to-image-v1.1.14-874754de-linux-amd64.tar.gz
+
+Install annaconds:
+https://www.datacamp.com/community/tutorials/google-cloud-data-science
+
+
+For SSL:
+
+https://jupyter-notebook.readthedocs.io/en/stable/public_server.html
+Follow : Running a public notebook server
+
+
+How Canary Deployments Work, Part 1: Kubernetes, Istio and Linkerd
+
+https://medium.com/glasnostic/how-canary-deployments-work-part-1-kubernetes-istio-and-linkerd-9625b427eca
+
+To get the IP address of Ambassador, run the following commands:
+NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+     You can watch the status of by running 'kubectl get svc -w  --namespace default ambassador'
+  On GKE/Azure:
+  export SERVICE_IP=$(kubectl get svc --namespace default ambassador -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+  On AWS:
+  export SERVICE_IP=$(kubectl get svc --namespace default ambassador -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+  echo http://$SERVICE_IP:
+
+
+Connect to kubernetes cluster:
+
+gcloud container clusters get-credentials helm-cluster --zone us-central1-a
+gcloud container clusters list
+
+
+Create a conda env:
+conda create --name keras_mnist  python=3.6  tensorflow=1.12.0  keras=2.1.3
+source activate keras_mnist
+jupyter notebook
+
+
+Connect kubect to a docker repo:
+sudo docker login
+cat ~/.docker/config.json
+
+env DOCKER_REPO=ksr1729 #Replace "gcav66" with your Docker Hub uname
+s2i build . seldonio/seldon-core-s2i-python3 ${DOCKER_REPO}/sklearn-iris:0.1
+
+
+kubectl create secret generic regcred \
+    --from-file=.dockerconfigjson=/home/kapilsreed/.docker/config.json \
+    --type=kubernetes.io/dockerconfigjson
+
+
+gcloud info | grep Account
+!kubectl create clusterrolebinding kube-system-cluster-admin --clusterrole=cluster-admin --serviceaccount=kube-system:default
+kubectl create clusterrolebinding kapilsreed-cluster-admin-binding --clusterrole=cluster-admin --user=kapilsreed@gmail.com
+
+
+Error from server (Forbidden): clusterrolebindings.rbac.authorization.k8s.io is forbidden: User "117592641749665627191" cannot create resource "clusterrolebindings" in API group "rbac.authorization.k8s.io" at the cluster scope
+
+
+Add yourself as the cluster admin
+kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin \
+        --user=$(gcloud config get-value account)
+
+Setup Jenkins:
+https://cloud.google.com/solutions/jenkins-on-kubernetes-engine-tutorial
+
+Deploy the applications into two environments.
+
+Production. The live site that your users access.
+
+Canary. A smaller-capacity site that receives a percentage of your user traffic. Use this environment to sanity check your software with live traffic before it's released to the live environment.
+
+
+Exposing your app:
+kubectl expose deployment cd-jenkins --type=LoadBalancer --name=cd-jenkins-service
+kubectl describe services my-service
+curl http://<external-ip>:<port>
+
+
+Jenkins password:
+1. Get your 'admin' user password by running:
+  printf $(kubectl get secret --namespace default cd-jenkins -o jsonpath="{.data.jenkins-admin-password}" | base64 --decode);echo
+2. Get the Jenkins URL to visit by running these commands in the same shell:
+  export POD_NAME=$(kubectl get pods --namespace default -l "component=cd-jenkins-master" -o jsonpath="{.items[0].metadata.name}")
+  echo http://127.0.0.1:8080
+  kubectl port-forward $POD_NAME 8080:8080
+
+Git personal access tocken:
+ksree
+d5db5a6b695a0d54e48ca87e0e590ed9a5ec3996
+
+kaniko - Build Images In Kubernetes
+https://github.com/GoogleContainerTools/kaniko
+
+Helm delete :
+helm ls
+helm del --purge cd
+
+
+Create Jenkins slave image:
+docker build -t gcr.io/[PROJECT]/my-jenkins-image .
+
+docker build -t ksr1729/jenkins:latest -f mlx/Dockerfile mlx
+docker push ksr1729/jenkins:latest
+
+Install jenkins image:
+helm install -n cd stable/jenkins -f jenkins/values.yaml --version 0.16.6 --wait
+
+helm install --dry-run --debug  -n cd stable/jenkins -f jenkins/values.yaml --version 0.16.6 --wait
+
+Delete:
+helm del --purge cd
+
+JNLP Slave base image:
+https://github.com/odavid/jenkins-jnlp-slave
+
+Create JNLP image:
+docker build -t ksr1729/jenkinslv_docker:latest -f Dockerfile .
+
+Install argo cd:
+https://argoproj.github.io/argo-cd/getting_started/
+Argocd password:argocd-server-85f965bccf-4pxll (kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o name | cut -d'/' -f 2)
+
+Expose iris-classification loadbalancer
+kubectl patch svc iris-classification -n default -p '{"spec": {"type": "LoadBalancer"}}'
+kubectl patch svc iris-classification-canary -n default -p '{"spec": {"type": "LoadBalancer"}}'
+
+
+!curl -g 35.239.42.177:5000/predict --data-urlencode 'json={"data":{"names":["sepallengthcm","sepalwidthcm","petallengthcm","petalwidthcm"],"tensor":{"shape":[1,4],"values":[5.1,3.5,1.4,0.2]}}}'
+
+json={"data":{"names":["sepallengthcm","sepalwidthcm","petallengthcm","petalwidthcm"],"tensor":{"shape":[1,4],"values":[5.1,3.5,1.4,0.2]}}}
