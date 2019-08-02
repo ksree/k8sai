@@ -10,8 +10,8 @@ curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyr
 sudo apt-get update && sudo apt-get install -y google-cloud-sdk
 
 ##Set the project id:
-gcloud config set project k8smlx
-gcloud auth activate-service-account --key-file k8smlx-6f6514a69f5a.json
+gcloud config set project blade-ai
+gcloud auth activate-service-account --key-file blade-ai-4e9b781e83fb.json 
 
 gcloud config list
 
